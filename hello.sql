@@ -476,6 +476,27 @@ SELECT * FROM city;
 SELECT * FROM dept CROSS JOIN city;
 
 
+-- ////////////////////////////// Practical:-11 Create view from one table and more than one table.
+use hello;
+-- create a view 
+CREATE Table Program_(program_id int,Program VARCHAR(50));
+INSERT into program_ VALUES(2,"BCA");
+INSERT into program_ VALUES(3,"BBA");
+INSERT into program_ VALUES(4,"MCA");
+INSERT into program_ VALUES(6,"Bjmca");
+SELECT * FROM program_;
+CREATE VIEW Stu_info as select Name,Dep_id FROM best ,Program_  WHERE  best.Program = program_.program_id;
+SELECT * FROM stu_info;
+
+-- ///////////////////////////////////////////////practical 12 Create index on a column of a table.
+use hello;
+SELECT * FROM best1;
+create index index_Tias on best1(FName,Program,Tias_ID);
+show index from best1;
+drop index index_Tias on best1;
+
+
+
 
 -- ///////////////////////////////////Practical - 13
 -- Consider the Insurance company’s Database given below. The primary keys are 
@@ -538,29 +559,116 @@ INSERT into participated VALUES(105,06754,05,54000);
 SELECT * FROM participated;
 
 
--- ///////////////////////////////////////////////practical 12 Create index on a column of a table.
-use hello;
-SELECT * FROM best1;
-create index index_Tias on best1(FName,Program,Tias_ID);
-show index from best1;
-drop index index_Tias on best1;
+--(i) Create the above tables by properly specified the primary key and the foreign key
+ALTER TABLE  accident ADD FOREIGN KEY (report_number) REFERENCES participated(report_number);
 
--- ////////////////////////////// Practical:-11 Create view from one table and more than one table.
-use hello;
--- create a view 
-CREATE Table Program_(program_id int,Program VARCHAR(50));
-INSERT into program_ VALUES(2,"BCA");
-INSERT into program_ VALUES(3,"BBA");
-INSERT into program_ VALUES(4,"MCA");
-INSERT into program_ VALUES(6,"Bjmca");
-SELECT * FROM program_;
-CREATE VIEW Stu_info as select Name,Dep_id FROM best ,Program_  WHERE  best.Program = program_.program_id;
-SELECT * FROM stu_info;
+--(ii)(A) Update the damage amount for the car with a specific regno, the 
+-- accident with report number 12 to 25000.
+UPDATE participated SET damage_amount=damage_amount+1000  WHERE report_number BETWEEN 12 AND 25000 AND regno = 06734;
+
+-- (ii)(B)Add a new accident to the database.
+INSERT INTO accident VALUES(28000,'2021-01-13',"Rohini sector-11 Delhi");
+
+--(iii) Find the total number of people who owned cars that were involved in accident in2002
+SELECT COUNT(report_number) FROM accident WHERE acc_date =2002; 
 
 
+-- (iv) Find the number of accident in which cars belonging to a specific models were involved
+Select count(report_number) as accident_ from ACCIDENT  where  report_number  IN (select report_number from car where model='Rolls-Royce model_ ' OR model="Audi AG model_ ");
 
 
+-- Q14
+-- Consider the following schema of a library_management system.Write the SQL 
+-- queries for the questions given below;
+-- Student(Stud_no : integer, Stud_name: string)
+-- Membership(Mem_no: integer, Stud_no: integer)
+-- Book_(book_no: integer, book_name:string, author: string)
+-- lss_rec_(iss_no:integer, iss_date: date, Mem_no: integer, book_no: integer)
+-- (i) Create the tables with the appropriate integrity constraints
+-- (ii) Insert around 10 records in each of the tables
+-- (iii)Display all records for all tables
+-- (iv)List all the student names with their membership numbers
+-- (v) List all the issues for the current date with student and Book names
+-- (vi) List the details of students who borrowed book whose author is Elmarsi & Navathe
+-- (vii) Give a count of how many books have been bought by each student
+-- (viii) Give a list of books taken by student with stud_no as 1005
+-- (ix) Delete the List of books details which are issued as of today
+-- (x) Create a view which lists out the iss_no, iss _date, stud_name, book name 
 
 
+CREATE DATABASE library_management; 
 
+use library_management;
+-- (i) Create the tables with the appropriate integrity constraints
+-- (ii) Insert around 10 records in each of the tables
+-- (iii)Display all records for all tables
+CREATE TABLE Student(Stud_no  int PRIMARY KEY, Stud_name VARCHAR(60));
+
+INSERT INTO Student VALUES (01,'Shehbaz');
+INSERT INTO Student VALUES (02,'Sana');
+INSERT INTO Student VALUES (03,'Sonker');
+INSERT INTO Student VALUES (04,'Suraj');
+INSERT INTO Student VALUES (05,'Sunil');
+INSERT INTO Student VALUES (06,'Sona');
+INSERT INTO Student VALUES (07,'Sonu');
+INSERT INTO Student VALUES (08,'Khushi');
+INSERT INTO Student VALUES (09,'kunal');
+INSERT INTO Student VALUES (10,'Kumar Sanu');
+INSERT INTO Student VALUES (1005,'Kumar Saalu');
+
+SELECT * FROM student;
+
+CREATE TABLE Membership(Mem_no int PRIMARY KEY, Stud_no int);
+
+INSERT INTO membership VALUES(101,01);
+INSERT INTO membership VALUES(102,02);
+INSERT INTO membership VALUES(103,03);
+INSERT INTO membership VALUES(104,04);
+INSERT INTO membership VALUES(105,05);
+INSERT INTO membership VALUES(106,06);
+INSERT INTO membership VALUES(107,07);
+INSERT INTO membership VALUES(108,08);
+INSERT INTO membership VALUES(109,09);
+INSERT INTO membership VALUES(110,10);
+SELECT * FROM membership;
+CREATE TABLE Book_(book_no int, book_name VARCHAR(200), author VARCHAR(200));
+TRUNCATE TABLE Book_;
+INSERT INTO book_ VALUES (201,"fund-Database_System" ,"Elmarsi & Navathe");
+INSERT INTO book_ VALUES (01,"fund-Database_System" ,"Elmarsi & Navathe");
+INSERT INTO book_ VALUES (02,"fund-Database_System" ,"Elmarsi & Navathe");
+INSERT INTO book_ VALUES (03,"fund-Database_System" ,"Elmarsi & Navathe");
+INSERT INTO book_ VALUES (01,"My Journey" ,"Dr. A.P.J. Abdul Kalam");
+INSERT INTO book_ VALUES (03,"Making of New India" ,"Dr. Bibek Debroy");
+INSERT INTO book_ VALUES (04,"Mahatma Gandhi" ,"Shehbaz khan");
+INSERT INTO book_ VALUES (05,"Python-ML" ,"Ryan Turner");
+INSERT INTO book_ VALUES (06,"Python-Programming" ,"Anthony Brun");
+INSERT INTO book_ VALUES (07,"C++" ,"Ray Yao");
+INSERT INTO book_ VALUES (08,"Arduino Programming" ,"Ryan Turner");
+INSERT INTO book_ VALUES (9,"SQL" ,"Ryan Turner");
+INSERT INTO book_ VALUES (10,"DjangoQuickStart" ,"Ray Yao");
+INSERT INTO book_ VALUES (210,"DjangoQuickStart" ,"Ray Yao");
+INSERT INTO book_ VALUES (1005,"DjangoQuickStart" ,"Ray Yao");
+INSERT INTO book_ VALUES (1005,"MYSQL" ,"Ray Yao");
+
+SELECT *FROM book_;
+
+CREATE TABLE lss_rec(iss_no_ int PRIMARY KEY, iss_date date, Mem_no int, book_no int);
+
+INSERT INTO lss_rec VALUES (302,'2002-03-21',102,02);
+INSERT INTO lss_rec VALUES (303,'2012-03-27',103,03);
+INSERT INTO lss_rec VALUES (304,'2002-03-19',104,04);
+INSERT INTO lss_rec VALUES (305,'2002-04-30',105,05);
+INSERT INTO lss_rec VALUES (306,'2002-06-11',106,06);
+INSERT INTO lss_rec VALUES (307,'2002-05-26',107,07);
+INSERT INTO lss_rec VALUES (308,'2002-08-26',108,08);
+INSERT INTO lss_rec VALUES (309,'2002-09-22',109,09);
+INSERT INTO lss_rec VALUES (310,'2002-11-23',110,10);
+
+SELECT *FROM lss_rec;
+-- (vi)List the details of students who borrowed book whose author is Elmarsi & Navathe
+Select *from student where Stud_no IN(select book_no from book_ where author = 'Elmarsi & Navathe');
+
+
+-- (iv)List all the student names with their membership numbers 
+SELECT Mem_no,Stud_name FROM membership JOIN student WHERE membership.Stud_no =student.Stud_no;
 
