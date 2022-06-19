@@ -342,9 +342,11 @@ Select count(report_number) as accident_ from ACCIDENT  where  report_number  IN
 -- (x) Create a view which lists out the iss_no, iss _date, stud_name, book name 
 
 
+
 CREATE DATABASE library_management; 
 
 use library_management;
+
 -- (i) Create the tables with the appropriate integrity constraints
 -- (ii) Insert around 10 records in each of the tables
 -- (iii)Display all records for all tables
@@ -364,8 +366,8 @@ INSERT INTO Student VALUES (1005,'Kumar Saalu');
 
 SELECT * FROM student;
 
-CREATE TABLE Membership(Mem_no int PRIMARY KEY, Stud_no int);
-
+CREATE TABLE Membership(Mem_no int, Stud_no int);
+TRUNCATE TABLE Membership;
 INSERT INTO membership VALUES(101,01);
 INSERT INTO membership VALUES(102,02);
 INSERT INTO membership VALUES(103,03);
@@ -376,6 +378,9 @@ INSERT INTO membership VALUES(107,07);
 INSERT INTO membership VALUES(108,08);
 INSERT INTO membership VALUES(109,09);
 INSERT INTO membership VALUES(110,10);
+INSERT INTO membership VALUES(05,1005);
+INSERT INTO membership VALUES(310,05);
+INSERT INTO membership VALUES(311,06);
 SELECT * FROM membership;
 CREATE TABLE Book_(book_no int, book_name VARCHAR(200), author VARCHAR(200));
 TRUNCATE TABLE Book_;
@@ -384,13 +389,12 @@ INSERT INTO book_ VALUES (01,"fund-Database_System" ,"Elmarsi & Navathe");
 INSERT INTO book_ VALUES (02,"fund-Database_System" ,"Elmarsi & Navathe");
 INSERT INTO book_ VALUES (03,"fund-Database_System" ,"Elmarsi & Navathe");
 INSERT INTO book_ VALUES (01,"My Journey" ,"Dr. A.P.J. Abdul Kalam");
-INSERT INTO book_ VALUES (03,"Making of New India" ,"Dr. Bibek Debroy");
 INSERT INTO book_ VALUES (04,"Mahatma Gandhi" ,"Shehbaz khan");
 INSERT INTO book_ VALUES (05,"Python-ML" ,"Ryan Turner");
 INSERT INTO book_ VALUES (06,"Python-Programming" ,"Anthony Brun");
 INSERT INTO book_ VALUES (07,"C++" ,"Ray Yao");
 INSERT INTO book_ VALUES (08,"Arduino Programming" ,"Ryan Turner");
-INSERT INTO book_ VALUES (9,"SQL" ,"Ryan Turner");
+INSERT INTO book_ VALUES (09,"DjangoQuickStart" ,"Ray Yao");
 INSERT INTO book_ VALUES (10,"DjangoQuickStart" ,"Ray Yao");
 INSERT INTO book_ VALUES (210,"DjangoQuickStart" ,"Ray Yao");
 INSERT INTO book_ VALUES (1005,"DjangoQuickStart" ,"Ray Yao");
@@ -409,12 +413,34 @@ INSERT INTO lss_rec VALUES (307,'2002-05-26',107,07);
 INSERT INTO lss_rec VALUES (308,'2002-08-26',108,08);
 INSERT INTO lss_rec VALUES (309,'2002-09-22',109,09);
 INSERT INTO lss_rec VALUES (310,'2002-11-23',110,10);
-
+INSERT INTO lss_rec VALUES (311,'2002-11-23',05,05);
 SELECT *FROM lss_rec;
--- (vi)List the details of students who borrowed book whose author is Elmarsi & Navathe
-Select *from student where Stud_no IN(select book_no from book_ where author = 'Elmarsi & Navathe');
 
 
 -- (iv)List all the student names with their membership numbers 
 SELECT Mem_no,Stud_name FROM membership JOIN student WHERE membership.Stud_no =student.Stud_no;
+
+-- (v) List all the issues for the current date with student and Book names
+select Stud_name, book_name from student, book_, lss_rec ,membership where iss_date= '2002-03-19'
+AND student.Stud_no= membership.Stud_no AND  lss_rec.Mem_no= membership.Mem_no AND lss_rec.book_no= book_.book_no;
+
+
+-- (vi)List the details of students who borrowed book whose author is Elmarsi & Navathe
+Select *from student where Stud_no IN(select book_no from book_ where author = 'Elmarsi & Navathe');
+
+-- (vii) Give a count of how many books have been bought by each student
+select count(book_no) from lss_rec;
+
+-- (viii) Give a list of books taken by student with stud_no as 1005
+select book_name from book_ where book_no=(select book_no from lss_rec where Mem_no=(select Mem_no from membership where Stud_no= 1005));
+
+-- (ix) Delete the List of books details which are issued as of today
+DELETE FROM book_ WHERE book_no = (SELECT book_no FROM lss_rec WHERE iss_date= '2012-03-27' );
+
+-- (x) Create a view which lists out the iss_no, iss _date, stud_name, book name 
+create view info1 as select iss_no_, iss_date, Stud_name, book_name from lss_rec, student, book_ , membership where lss_rec.Mem_no=membership.Mem_no AND student.Stud_no=membership.Stud_no AND book_.book_no=lss_rec.book_no;
+select *from info1;
+
+
+
 
