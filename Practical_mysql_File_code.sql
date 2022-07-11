@@ -323,7 +323,7 @@ SELECT COUNT(report_number) FROM accident WHERE acc_date =2002;
 Select count(report_number) as accident_ from ACCIDENT  where  report_number  IN (select report_number from car where model='Rolls-Royce model_ ' OR model="Audi AG model_ ");
 
 
--- Q14
+-- Practical 14
 -- Consider the following schema of a library_management system.Write the SQL 
 -- queries for the questions given below;
 -- Student(Stud_no : integer, Stud_name: string)
@@ -440,6 +440,143 @@ DELETE FROM book_ WHERE book_no = (SELECT book_no FROM lss_rec WHERE iss_date= '
 -- (x) Create a view which lists out the iss_no, iss _date, stud_name, book name 
 create view info1 as select iss_no_, iss_date, Stud_name, book_name from lss_rec, student, book_ , membership where lss_rec.Mem_no=membership.Mem_no AND student.Stud_no=membership.Stud_no AND book_.book_no=lss_rec.book_no;
 select *from info1;
+
+-- practical 15
+
+-- Use the relations below to write SQL queries to solve the business problems 
+-- specified.
+-- CLIENT (clientno#,name, client_referred_by#)
+-- ORDER (orderno#, clientno#, order_date, empid#)
+-- ORDER_LINE (orderno#, order line number#, item_number#, no_of_items, 
+-- item_ cost,shipping_date)
+-- ITEM (item_number#, item_type, cost)
+-- EMPLOYEE (empid#, emp_type#, deptno, salary, firstname, lastname)
+-- Notes:
+-- a. Column followed by # is the primary key of the table.
+-- b. Each client may be referred by another client. If so, the client number of 
+-- the referring client is stored in referred_by.
+-- c. The total cost for a particular order line = no_of_items * item_cost.c.
+-- Write queries for the following 
+-- (i) Create all the above tables.
+-- (ii) Insert at least five records.
+-- (iii) Display all the rows and columns in the CLIENT table. Sort by client name in reverse alphabetical order.
+-- (iv) Display the item number and total cost for each order line (total cost = no of items X item cost). Name the calculated column TOTAL COST.
+-- (v) Display all the client numbers in the ORDER table. Remove duplicates.
+-- (vi) Display the order number and client number from the ORDER table. Output the result in the format. Client <clientno> ordered <orderno>
+-- (vii) Display full details from the ORDER_LINE table where the item 
+-- number is (first condition) between 1 and 200 (no > or < operators) OR 
+-- the item number is greater than1000 AND (second condition) the item 
+-- cost is not in the list 1000, 2000, 3000 OR the order number is not 
+-- equal to 1000.
+-- (viii) Display the client name and order date for all orders. 
+-- (ix) Repeat query (6) but also display all clients who have never ordered anything.
+-- (x) Display the client name and order date for all orders using the join keywords.
+-- (xi) Display the client name and order date for all orders using the JOIN method.
+-- (xii) Display the client number, order date and shipping date for all orders 
+-- where the shipping date is between three and six months after the order date.
+-- (xiii) Display the client number and name and the client number and name 
+-- of the person who referred that client.
+-- (xiv) Display the client name in upper case only and in lower case only.
+-- (xv) Display the second to fifth characters in each client name.
+
+
+
+
+CREATE Table CLIENT (clientno int PRIMARY KEY,name VARCHAR(50) , client_referred_by int);
+
+INSERT INTO client VALUES (101,"Shehbaz",501);
+INSERT INTO client VALUES (102,"Ankush",502);
+INSERT INTO client VALUES (103,"Aman",503);
+INSERT INTO client VALUES (104,"Rahul",504);
+INSERT INTO client VALUES (105,"Satvik",505);
+
+
+CREATE Table ORDER_(orderno int PRIMARY KEY, clientno int NOT NULL, order_date DATE, empid INT NOT NULL);
+
+INSERT INTO order_ VALUES (201,101,"2022-02-22",10021);
+INSERT INTO order_ VALUES (202,102,"2014-11-02",10022);
+INSERT INTO order_ VALUES (203,103,"2015-03-12",10023);
+INSERT INTO order_ VALUES (204,104,"2004-08-13",10024);
+INSERT INTO order_ VALUES (205,105,"2010-02-11",10025);
+INSERT INTO order_ VALUES (0,106,"2010-02-11",10025);
+
+CREATE TABLE ORDER_LINE (orderno int PRIMARY KEY, order_line_ int, item_number int, no_of_items int, item_cost INT ,shipping_date DATE);
+
+INSERT INTO order_line VALUES (201,12000,001,6,2000,"2022-02-24");
+INSERT INTO order_line VALUES (202,1797,002,3,599,"2014-12-14");
+INSERT INTO order_line VALUES (203,19900,003,1,19900,"2015-04-24");
+INSERT INTO order_line VALUES (204,3598,004,2,1799,"2004-08-14");
+INSERT INTO order_line VALUES (205,1299,005,1,1299,"2010-02-24");
+CREATE TABLE ITEM (item_number int PRIMARY KEY, item_type VARCHAR(50), cost INT);
+
+INSERT INTO item VALUES (001,"Colorfit Pro 2 Smartwatch",2000);
+INSERT INTO item VALUES (002,"Lcd Writing Tablet",599);
+INSERT INTO item VALUES (003,"OnePlus Nord CE 2 Lite 5G",19900);
+INSERT INTO item VALUES (004,"boAt Wave Lite Smartwatch",1799);
+INSERT INTO item VALUES (005,"Nokia 105 Single SIM (Black)",1299);
+
+CREATE TABLE EMPLOYEE (empid int PRIMARY KEY, emp_type VARCHAR(50), deptno int , salary BIGINT, firstname VARCHAR(50), lastname VARCHAR(50));
+
+INSERT INTO EMPLOYEE VALUES (1002,"Full-time employee",901,120000,"Shehbaz","khan");
+INSERT INTO employee VALUES (10022,"Part-time employee",902,12000,"Ankush","Yadav");
+INSERT INTO employee VALUES (10023,"Temporary employee",903,122000,"Aman","Sharma");
+INSERT INTO employee VALUES (10024,"Part-time employee",904,124000,"Rahul","Mittal");
+INSERT INTO employee VALUES (10025,"Part-time employee",905,143000,"Satvik","Sharma");
+
+
+-- (iii) Display all the rows and columns in the CLIENT table. Sort by client name in reverse alphabetical order.
+SELECT * FROM client ORDER BY name DESC;
+
+
+--(iv) Display the item number and total cost for each order line (total cost = no of items X item cost). Name the calculated column TOTAL COST.
+SELECT item_number,order_line_ AS TOTAL_COST FROM ORDER_LINE;
+
+
+-- (v) Display all the client numbers in the ORDER table. Remove duplicates.
+SELECT DISTINCT clientno AS client_numbers FROM client;
+
+-- (vi) Display the order number and client number from the ORDER table. Output the result in the format. Client <clientno> ordered <orderno>
+SELECT clientno AS "<clientno>",orderno AS "<orderno>" from order_;
+
+--(vii) Display full details from the ORDER_LINE table where the item 
+-- number is (first condition) between 1 and 200 (no > or < operators) 
+--OR the item number is greater than1000 AND 
+-- (second condition) the item 
+-- cost is not in the list 1000, 2000, 3000 OR the order number is not 
+-- equal to 1000.
+SELECT * FROM order_line where item_number BETWEEN 2 AND 5 OR item_number>2;
+SELECT * FROM order_line where item_cost NOT IN(1000,2000,3000) OR NOT(orderno=1000);
+
+
+-- (viii) Display the client name and order date for all orders. 
+SELECT name,order_date FROM client,order_ WHERE client.clientno = order_.clientno ;
+
+-- (6) Display the order number and client number from the ORDER table. Output the result in the format. Client <clientno> ordered <orderno>
+-- (ix) Repeat query (6) but also display all clients who have never ordered anything.
+SELECT clientno AS "<clientno>",orderno AS "<orderno>" from order_;
+
+-- (x) Display the client name and order date for all orders using the join keywords.
+SELECT name,order_date FROM client JOIN order_ ON client.clientno = order_.clientno ;
+
+
+-- (xi) Display the client name and order date for all orders using the JOIN method.
+SELECT name,order_date FROM client INNER JOIN order_ ON client.clientno = order_.clientno ;
+
+--(xii) Display the client number, order date and shipping date for all orders 
+-- where the shipping date is between three and six months after the order date.
+
+-- SELECT clientno,order_date ,shipping_date FROM client, order_,ORDER_LINE WHERE shipping_date BETWEEN  ;
+
+-- (xiii) Display the client number and name and the client number and name 
+-- of the person who referred that client.
+SELECT clientno,name FROM client WHERE client_referred_by =502;
+
+-- (xiv) Display the client name in upper case only and in lower case only.
+SELECT UPPER(name) FROM client;
+SELECT lower(name) FROM client;
+
+-- (xv) Display the second to fifth characters in each client name.
+SELECT SUBSTRING(name,2,5) FROM client;
 
 
 
